@@ -3,6 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:speech_to_text_conversion/constants.dart';
+import 'package:speech_to_text_conversion/screens/login_screen.dart';
+import 'package:speech_to_text_conversion/widgets/dialog_box.dart';
 import 'package:speech_to_text_conversion/widgets/error_message.dart';
 import 'package:speech_to_text_conversion/widgets/input_text_field.dart';
 import 'package:speech_to_text_conversion/widgets/main_button.dart';
@@ -33,7 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         final newUser = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
         if (newUser != null) {
-          Navigator.pop(context);
+          showDialogBox();
         }
         setState(() {
           showSpinner = false;
@@ -48,6 +50,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } else {
       print('error');
     }
+  }
+
+  void showDialogBox() {
+    showDialog(
+      context: context,
+      builder: (context) => DialogBox(
+        click: () {
+          setState(() {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => LoginScreen()));
+          });
+        },
+      ),
+    );
   }
 
   PasswordValidator pwv = PasswordValidator();
