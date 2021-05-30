@@ -154,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Color(0xff48C9B0),
         title: Center(
           child: Padding(
-            padding: const EdgeInsets.only(left: 30),
+            padding: const EdgeInsets.only(left: 40),
             child: Text(
               'Speech To Text',
               style: kTextStytle.copyWith(fontSize: 20, color: Colors.white),
@@ -163,8 +163,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           GestureDetector(
-            onTap: () {
-              getCurrentUser();
+            onTap: () async {
+              try {
+                await _auth.signOut();
+              } catch (e) {
+                print(e);
+              }
+
+              Navigator.pop(context);
             },
             child: Padding(
               padding: const EdgeInsets.only(right: 20),
