@@ -62,6 +62,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 MaterialPageRoute(builder: (context) => LoginScreen()));
           });
         },
+        message: 'Account Created successfully',
+        button: 'Proceed to login',
+        icon: FontAwesomeIcons.thumbsUp,
+        color: Color(0xff48C9B0),
       ),
     );
   }

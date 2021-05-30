@@ -4,13 +4,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../constants.dart';
 
 class DialogBox extends StatelessWidget {
-  DialogBox({this.click});
+  DialogBox({this.click, this.message, this.icon, this.button, this.color});
   final Function click;
+  final String message;
+  final IconData icon;
+  final String button;
+  final Color color;
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        'Account Created successfully',
+        message,
         textAlign: TextAlign.center,
         style: kTextStytle.copyWith(
           fontSize: 20,
@@ -22,8 +26,8 @@ class DialogBox extends StatelessWidget {
         child: Column(
           children: [
             Icon(
-              FontAwesomeIcons.thumbsUp,
-              color: Color(0xff48C9B0),
+              icon,
+              color: color,
               size: 100,
             ),
             SizedBox(
@@ -34,7 +38,7 @@ class DialogBox extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  'Proceed to login',
+                  button,
                   style: kTextStytle.copyWith(
                     fontSize: 20,
                     color: Colors.white,

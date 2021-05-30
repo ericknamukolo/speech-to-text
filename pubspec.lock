@@ -50,6 +50,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  connection_verify:
+    dependency: "direct main"
+    description:
+      name: connection_verify
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   crypto:
     dependency: transitive
     description:

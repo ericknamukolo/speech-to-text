@@ -1,10 +1,13 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:highlight_text/highlight_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:speech_to_text_conversion/constants.dart';
 import 'package:speech_to_text_conversion/widgets/conversion_screen.dart';
+import 'package:connection_verify/connection_verify.dart';
+import 'package:speech_to_text_conversion/widgets/dialog_box.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -67,6 +70,13 @@ class _HomeScreenState extends State<HomeScreen> {
     getCurrentUser();
   }
 
+  void logOut() {
+    setState(() {
+      _auth.signOut();
+      Navigator.pop(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     void _listen() async {
@@ -92,6 +102,21 @@ class _HomeScreenState extends State<HomeScreen> {
           _speech.stop();
         });
       }
+    }
+
+    void showADialog() {
+      showDialog(
+        context: context,
+        builder: (context) => DialogBox(
+          message: 'Check your internet connection',
+          button: 'Retry',
+          icon: FontAwesomeIcons.times,
+          click: () {
+            logOut();
+          },
+          color: Colors.redAccent,
+        ),
+      );
     }
 
     final tabs = [
@@ -164,13 +189,15 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           GestureDetector(
             onTap: () async {
-              try {
-                await _auth.signOut();
-              } catch (e) {
-                print(e);
+              if (await ConnectionVerify.connectionStatus()) {
+                try {
+                  logOut();
+                } catch (e) {
+                  print(e);
+                }
+              } else {
+                showADialog();
               }
-
-              Navigator.pop(context);
             },
             child: Padding(
               padding: const EdgeInsets.only(right: 20),
