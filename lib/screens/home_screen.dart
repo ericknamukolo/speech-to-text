@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -119,6 +120,11 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
+    void playErrorSound() {
+      final player = AudioCache();
+      player.play('error.mp3');
+    }
+
     final tabs = [
       ConversionScreen(text: _text, highlights: _highlights),
       Center(
@@ -196,6 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   print(e);
                 }
               } else {
+                playErrorSound();
                 showADialog();
               }
             },
