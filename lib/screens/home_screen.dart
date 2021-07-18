@@ -1,14 +1,16 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:highlight_text/highlight_text.dart';
+import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:speech_to_text_conversion/constants.dart';
+import 'package:speech_to_text_conversion/models/text_data.dart';
 import 'package:speech_to_text_conversion/widgets/conversion_screen.dart';
 import 'package:connection_verify/connection_verify.dart';
 import 'package:speech_to_text_conversion/widgets/dialog_box.dart';
+import 'package:speech_to_text_conversion/widgets/saved_texts_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -101,6 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _isListening = false;
           _speech.stop();
+          print(_text);
+          Provider.of<TextData>(context, listen: false).addItem(_text);
         });
       }
     }
@@ -120,16 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    void playErrorSound() {
-      final player = AudioCache();
-      player.play('error.mp3');
-    }
-
     final tabs = [
       ConversionScreen(text: _text, highlights: _highlights),
-      Center(
-        child: Text('Saved'),
-      ),
+      SavedTextsScreen(),
       Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -202,7 +199,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   print(e);
                 }
               } else {
-                playErrorSound();
                 showADialog();
               }
             },
