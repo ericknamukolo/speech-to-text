@@ -39,6 +39,7 @@ class SavedTextsScreen extends StatelessWidget {
                     dateTime: textData.textItems[index].dateTime,
                   ),
                   itemCount: textData.textItems.length,
+                  physics: BouncingScrollPhysics(),
                 ),
         ),
       ],

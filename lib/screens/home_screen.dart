@@ -11,6 +11,7 @@ import 'package:speech_to_text_conversion/widgets/conversion_screen.dart';
 import 'package:connection_verify/connection_verify.dart';
 import 'package:speech_to_text_conversion/widgets/dialog_box.dart';
 import 'package:speech_to_text_conversion/widgets/saved_texts_screen.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -26,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _auth = FirebaseAuth.instance;
   String displayUsername;
   FirebaseUser loggedInUser;
+  bool _isLoading = false;
   void getCurrentUser() async {
     try {
       final user = await _auth.currentUser();
@@ -68,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    Future.delayed(Duration.zero).then((_) => fetchTexts());
     super.initState();
     _speech = stt.SpeechToText();
     getCurrentUser();
@@ -78,6 +81,22 @@ class _HomeScreenState extends State<HomeScreen> {
       _auth.signOut();
       Navigator.pop(context);
     });
+  }
+
+  Future<void> addText() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await Provider.of<TextData>(context, listen: false)
+        .addItem(_text)
+        .then((_) => fetchTexts());
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> fetchTexts() async {
+    await Provider.of<TextData>(context, listen: false).fetchAndSetTexts();
   }
 
   @override
@@ -104,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _isListening = false;
           _speech.stop();
           print(_text);
-          Provider.of<TextData>(context, listen: false).addItem(_text);
+          addText();
         });
       }
     }
@@ -125,7 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     final tabs = [
-      ConversionScreen(text: _text, highlights: _highlights),
+      ModalProgressHUD(
+        inAsyncCall: _isLoading,
+        child: ConversionScreen(text: _text, highlights: _highlights),
+      ),
       SavedTextsScreen(),
       Container(
         child: Column(

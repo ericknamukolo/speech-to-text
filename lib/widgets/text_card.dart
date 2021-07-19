@@ -10,6 +10,8 @@ class TextCard extends StatelessWidget {
   final String id;
   final DateTime dateTime;
   TextCard({this.dateTime, this.id, this.text});
+
+  Future<void> delete() {}
   @override
   Widget build(BuildContext context) {
     return Container(
