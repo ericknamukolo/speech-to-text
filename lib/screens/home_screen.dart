@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _isListening = false;
           _speech.stop();
-          print(_text);
+
           addText();
         });
       }

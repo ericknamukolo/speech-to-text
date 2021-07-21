@@ -4,10 +4,22 @@ import 'package:speech_to_text_conversion/models/text_data.dart';
 import 'package:speech_to_text_conversion/widgets/no_texts_available.dart';
 import 'package:speech_to_text_conversion/widgets/text_card.dart';
 
-class SavedTextsScreen extends StatelessWidget {
+class SavedTextsScreen extends StatefulWidget {
+  @override
+  _SavedTextsScreenState createState() => _SavedTextsScreenState();
+}
+
+class _SavedTextsScreenState extends State<SavedTextsScreen> {
+  Future<void> _refresh(BuildContext context) {
+    return Provider.of<TextData>(context, listen: false).fetchAndSetTexts();
+  }
+
+  var _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     final textData = Provider.of<TextData>(context);
+
     return Column(
       children: [
         Container(
@@ -31,15 +43,33 @@ class SavedTextsScreen extends StatelessWidget {
         ),
         Expanded(
           child: textData.textItems.isEmpty
-              ? NoTextsAvailable()
-              : ListView.builder(
-                  itemBuilder: (context, index) => TextCard(
-                    text: textData.textItems[index].text,
-                    id: textData.textItems[index].id,
-                    dateTime: textData.textItems[index].dateTime,
+              ? _isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : NoTextsAvailable(
+                      refresh: () async {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        await Provider.of<TextData>(context, listen: false)
+                            .fetchAndSetTexts();
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      },
+                    )
+              : RefreshIndicator(
+                  color: Theme.of(context).primaryColor,
+                  onRefresh: () => _refresh(context),
+                  child: ListView.builder(
+                    itemBuilder: (context, index) => TextCard(
+                      text: textData.textItems[index].text,
+                      id: textData.textItems[index].id,
+                      dateTime: textData.textItems[index].dateTime,
+                    ),
+                    itemCount: textData.textItems.length,
                   ),
-                  itemCount: textData.textItems.length,
-                  physics: BouncingScrollPhysics(),
                 ),
         ),
       ],
